@@ -1,0 +1,153 @@
+// Main application controller
+(function() {
+  'use strict';
+  
+  var canvas = document.getElementById('mainCanvas');
+  var context = canvas.getContext('2d');
+  var params = new Parameters();
+  var bgColor = '#000000';
+  
+  // UI Elements
+  var menuToggle = document.getElementById('menuToggle');
+  var closeSidebar = document.getElementById('closeSidebar');
+  var sidebar = document.getElementById('sidebar');
+  var overlay = document.getElementById('overlay');
+  var newBtn = document.getElementById('newBtn');
+  var shareBtn = document.getElementById('shareBtn');
+  var infoBtn = document.getElementById('infoBtn');
+  var paletteSelect = document.getElementById('paletteSelect');
+  var densitySlider = document.getElementById('densitySlider');
+  var densityValue = document.getElementById('densityValue');
+  var pixelSizeSlider = document.getElementById('pixelSizeSlider');
+  var pixelSizeValue = document.getElementById('pixelSizeValue');
+  var verticalMirrorToggle = document.getElementById('verticalMirrorToggle');
+  var horizontalMirrorToggle = document.getElementById('horizontalMirrorToggle');
+  var smoothingToggle = document.getElementById('smoothingToggle');
+  
+  // Initialize canvas size
+  function setCanvasSize() {
+    var w = window.innerWidth;
+    var h = window.innerHeight;
+    var canvasRect = DrawingEngine.setCanvasSize(w, h, params);
+    
+    canvas.width = DrawingEngine.W;
+    canvas.height = DrawingEngine.H;
+    canvas.style.width = canvasRect.width + 'px';
+    canvas.style.height = canvasRect.height + 'px';
+    canvas.style.left = canvasRect.x + 'px';
+    canvas.style.top = canvasRect.y + 'px';
+  }
+  
+  // Generate and draw new pattern
+  function generateNewPattern() {
+    DrawingEngine.apply_0_1_rule();
+    DrawingEngine.drawMatrix(params);
+    DrawingEngine.fillMatrix(context, params);
+  }
+  
+  // Redraw with current settings
+  function redraw() {
+    DrawingEngine.drawMatrix(params);
+    DrawingEngine.fillMatrix(context, params);
+  }
+  
+  // Refill with current settings (no regeneration)
+  function refill() {
+    DrawingEngine.fillMatrix(context, params);
+  }
+  
+  // Event Handlers
+  menuToggle.addEventListener('click', function() {
+    sidebar.classList.add('open');
+    overlay.classList.add('show');
+  });
+  
+  closeSidebar.addEventListener('click', function() {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('show');
+  });
+  
+  overlay.addEventListener('click', function() {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('show');
+  });
+  
+  newBtn.addEventListener('click', function() {
+    if (confirm('Are you sure you want to create a new image?')) {
+      generateNewPattern();
+    }
+  });
+  
+  shareBtn.addEventListener('click', function() {
+    canvas.toBlob(function(blob) {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'mazeart-' + Date.now() + '.png';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  });
+  
+  infoBtn.addEventListener('click', function() {
+    alert('#MaZeArtApp 2020-2023\n\nApp made by Santiago/zubie7a. Check Instagram @mazeartapp for more art! Thanks to Javier/infrahumano and Santiago/moebio for the playful exchanges and inspiration during the lockdowns.');
+  });
+  
+  paletteSelect.addEventListener('change', function() {
+    params.setPaletteIndex(parseInt(this.value));
+    redraw();
+  });
+  
+  densitySlider.addEventListener('input', function() {
+    var density = parseFloat(this.value);
+    params.setDensity(density);
+    densityValue.textContent = density.toFixed(1);
+    refill();
+  });
+  
+  pixelSizeSlider.addEventListener('input', function() {
+    var pixelSize = parseInt(this.value);
+    params.setPixelSize(pixelSize);
+    pixelSizeValue.textContent = pixelSize;
+    setCanvasSize();
+    generateNewPattern();
+  });
+  
+  verticalMirrorToggle.addEventListener('change', function() {
+    params.setVerticalMirroring(this.checked);
+    refill();
+  });
+  
+  horizontalMirrorToggle.addEventListener('change', function() {
+    params.setHorizontalMirroring(this.checked);
+    refill();
+  });
+  
+  smoothingToggle.addEventListener('change', function() {
+    params.setSmoothing(this.checked);
+    refill();
+  });
+  
+  // Handle window resize
+  window.addEventListener('resize', function() {
+    setCanvasSize();
+    generateNewPattern();
+  });
+  
+  // Initialize
+  setCanvasSize();
+  generateNewPattern();
+  
+  // Update UI with current parameter values
+  densitySlider.value = params.getDensity();
+  densityValue.textContent = params.getDensity().toFixed(1);
+  pixelSizeSlider.value = params.getPixelSize();
+  pixelSizeValue.textContent = params.getPixelSize();
+  verticalMirrorToggle.checked = params.getVerticalMirroring();
+  horizontalMirrorToggle.checked = params.getHorizontalMirroring();
+  smoothingToggle.checked = params.getSmoothing();
+  paletteSelect.value = params.getPaletteIndex();
+})();
+

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>MaZeArt</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Menu Toggle Button -->
+  <button type="button" id="menuToggle" class="menu-toggle" aria-label="Open menu">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+    </svg>
+  </button>
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <h1>MaZeArt</h1>
+      <button type="button" id="closeSidebar" class="close-btn" aria-label="Close menu">&times;</button>
+    </div>
+
+    <div class="sidebar-content">
+      <!-- Action Buttons -->
+      <div class="button-row">
+        <button type="button" id="newBtn" class="btn btn-primary">New</button>
+        <button type="button" id="shareBtn" class="btn btn-secondary">Share</button>
+        <button type="button" id="infoBtn" class="btn btn-icon" title="Info">ℹ</button>
+      </div>
+
+      <hr>
+
+      <!-- Palette Selection -->
+      <div class="control-group">
+        <label for="paletteSelect">Palette</label>
+        <select id="paletteSelect">
+          <option value="0">Random</option>
+          <option value="1" selected>Rainbows</option>
+          <option value="2">Blaze</option>
+          <option value="3">Glacier</option>
+          <option value="4">Ocean</option>
+          <option value="5">Natural</option>
+          <option value="6">Bluesky</option>
+          <option value="7">Grayscale</option>
+          <option value="8">Sepia</option>
+          <option value="9">Mystical</option>
+          <option value="10">Tropical</option>
+          <option value="11">Aurora</option>
+          <option value="12">Neon</option>
+          <option value="13">Brazil</option>
+          <option value="14">Mexico</option>
+          <option value="15">Colombia</option>
+          <option value="16">Germany</option>
+          <option value="17">Netherlands</option>
+          <option value="18">Sunset</option>
+          <option value="19">Beach</option>
+          <option value="20">Future</option>
+          <option value="21">Sunny</option>
+          <option value="22">Pastel</option>
+          <option value="23">Intense</option>
+          <option value="24">Dash</option>
+          <option value="25">Runner</option>
+          <option value="26">Mint</option>
+          <option value="27">Viridis</option>
+          <option value="28">Happy</option>
+          <option value="29">Comfy</option>
+          <option value="30">Shiny</option>
+          <option value="31">Cyber</option>
+          <option value="32">Jupiter</option>
+          <option value="33">Blossom</option>
+        </select>
+      </div>
+
+      <!-- Density Slider -->
+      <div class="control-group">
+        <label for="densitySlider">Density: <span id="densityValue">1.0</span></label>
+        <input type="range" id="densitySlider" min="0" max="1" step="0.1" value="1.0">
+      </div>
+
+      <!-- Pixel Size Slider -->
+      <div class="control-group">
+        <label for="pixelSizeSlider">Pixel Size: <span id="pixelSizeValue">1</span></label>
+        <input type="range" id="pixelSizeSlider" min="1" max="10" value="1">
+      </div>
+
+      <hr>
+
+      <!-- Effects Toggles -->
+      <div class="toggle-group">
+        <label class="toggle">
+          <input type="checkbox" id="verticalMirrorToggle" checked>
+          <span class="toggle-track">
+            <span class="toggle-handle"></span>
+          </span>
+          <span class="toggle-label">Vertical Mirroring</span>
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="horizontalMirrorToggle" checked>
+          <span class="toggle-track">
+            <span class="toggle-handle"></span>
+          </span>
+          <span class="toggle-label">Horizontal Mirroring</span>
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="smoothingToggle">
+          <span class="toggle-track">
+            <span class="toggle-handle"></span>
+          </span>
+          <span class="toggle-label">Smoothing</span>
+        </label>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Overlay for closing sidebar on mobile -->
+  <div id="overlay" class="overlay"></div>
+
+  <!-- Canvas Container -->
+  <main class="canvas-container">
+    <canvas id="mainCanvas"></canvas>
+  </main>
+
+  <!-- Scripts - load in order -->
+  <!-- Core Models -->
+  <script src="js/models/Square.js"></script>
+  <script src="js/models/QueueItem.js"></script>
+  <script src="js/models/Parameters.js"></script>
+  <!-- Palette system -->
+  <script src="js/palettes/Palette.js"></script>
+  <!-- Palette ranges -->
+  <script src="js/palettes/ranges/Manual.js"></script>
+  <script src="js/palettes/ranges/Rainbows.js"></script>
+  <script src="js/palettes/ranges/Blaze.js"></script>
+  <script src="js/palettes/ranges/Glacier.js"></script>
+  <script src="js/palettes/ranges/Ocean.js"></script>
+  <script src="js/palettes/ranges/Natural.js"></script>
+  <script src="js/palettes/ranges/Bluesky.js"></script>
+  <script src="js/palettes/ranges/Grayscale.js"></script>
+  <script src="js/palettes/ranges/Sepia.js"></script>
+  <script src="js/palettes/ranges/Mystical.js"></script>
+  <script src="js/palettes/ranges/Tropical.js"></script>
+  <script src="js/palettes/ranges/Aurora.js"></script>
+  <script src="js/palettes/ranges/Neon.js"></script>
+  <script src="js/palettes/ranges/Brazil.js"></script>
+  <script src="js/palettes/ranges/Mexico.js"></script>
+  <script src="js/palettes/ranges/Colombia.js"></script>
+  <script src="js/palettes/ranges/Germany.js"></script>
+  <script src="js/palettes/ranges/Netherlands.js"></script>
+  <script src="js/palettes/ranges/Sunset.js"></script>
+  <script src="js/palettes/ranges/Beach.js"></script>
+  <script src="js/palettes/ranges/Future.js"></script>
+  <script src="js/palettes/ranges/Sunny.js"></script>
+  <script src="js/palettes/ranges/Pastel.js"></script>
+  <script src="js/palettes/ranges/Intense.js"></script>
+  <script src="js/palettes/ranges/Dash.js"></script>
+  <script src="js/palettes/ranges/Runner.js"></script>
+  <script src="js/palettes/ranges/Mint.js"></script>
+  <script src="js/palettes/ranges/Viridis.js"></script>
+  <script src="js/palettes/ranges/Happy.js"></script>
+  <script src="js/palettes/ranges/Comfy.js"></script>
+  <script src="js/palettes/ranges/Shiny.js"></script>
+  <script src="js/palettes/ranges/Cyber.js"></script>
+  <script src="js/palettes/ranges/Jupiter.js"></script>
+  <script src="js/palettes/ranges/Blossom.js"></script>
+  <script src="js/palettes/loadPalettes.js"></script>
+  <script src="js/palettes/PaletteGenerator.js"></script>
+  <!-- Drawing engine -->
+  <script src="js/drawingEngine.js"></script>
+  <!-- Main app -->
+  <script src="js/app.js"></script>
+</body>
+</html>
+
