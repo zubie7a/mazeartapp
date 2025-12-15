@@ -136,8 +136,27 @@
     });
   });
   
+  // Info modal elements
+  var infoModal = document.getElementById('infoModal');
+  var modalOkBtn = document.getElementById('modalOkBtn');
+  var modalBackdrop = infoModal.querySelector('.modal-backdrop');
+  
   infoBtn.addEventListener('click', function() {
-    alert('#MaZeArtApp 2020-2023\n\nApp made by Santiago/zubie7a. Check Instagram @mazeartapp for more art! Thanks to Javier/infrahumano and Santiago/moebio for the playful exchanges and inspiration during the lockdowns.');
+    infoModal.classList.add('show');
+  });
+  
+  function closeInfoModal() {
+    infoModal.classList.remove('show');
+  }
+  
+  modalOkBtn.addEventListener('click', closeInfoModal);
+  modalBackdrop.addEventListener('click', closeInfoModal);
+  
+  // Close modal on Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && infoModal.classList.contains('show')) {
+      closeInfoModal();
+    }
   });
   
   paletteSelect.addEventListener('change', function() {
