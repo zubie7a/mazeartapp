@@ -142,9 +142,7 @@
   });
   
   newBtn.addEventListener('click', function() {
-    if (confirm('Are you sure you want to create a new image?')) {
-      generateNewPattern();
-    }
+    generateNewPattern();
   });
   
   shareBtn.addEventListener('click', function() {
