@@ -231,20 +231,22 @@ var DrawingEngine = {
         
         square.draw(context, _N, this.W, this.H, params.getDensity());
         
+        // Mirror using 0-based indices so that all mirrored squares
+        // stay within the visible canvas (no cropping on the right/bottom).
         if (params.getVerticalMirroring()) {
           var square2 = square.clone();
-          square2.row = _N - square.row + 1;
+          square2.row = (_N - 1) - square.row;
           square2.draw(context, _N, this.W, this.H, params.getDensity());
         }
         if (params.getHorizontalMirroring()) {
           var square3 = square.clone();
-          square3.col = _N - square.col + 1;
+          square3.col = (_N - 1) - square.col;
           square3.draw(context, _N, this.W, this.H, params.getDensity());
         }
         if (params.getVerticalMirroring() && params.getHorizontalMirroring()) {
           var square4 = square.clone();
-          square4.row = _N - square.row + 1;
-          square4.col = _N - square.col + 1;
+          square4.row = (_N - 1) - square.row;
+          square4.col = (_N - 1) - square.col;
           square4.draw(context, _N, this.W, this.H, params.getDensity());
         }
       }

@@ -24,60 +24,86 @@
   var horizontalMirrorToggle = document.getElementById('horizontalMirrorToggle');
   var smoothingToggle = document.getElementById('smoothingToggle');
   
-  // Store original matrix dimensions for scaling
-  var originalN = null;
+  // Store original on-screen canvas size so we can scale back to it
+  var originalCanvasSize = null;
   
   // Initialize canvas size (for initial setup only)
   function setCanvasSize() {
     var w = window.innerWidth;
     var h = window.innerHeight;
-    var canvasRect = DrawingEngine.setCanvasSize(w, h, params);
     
+    // Let the drawing engine pick an appropriate internal size & grid
+    DrawingEngine.setCanvasSize(w, h, params);
+    
+    // Backing store matches the engine's internal canvas size
     canvas.width = DrawingEngine.W;
     canvas.height = DrawingEngine.H;
-    canvas.style.width = canvasRect.width + 'px';
-    canvas.style.height = canvasRect.height + 'px';
-    canvas.style.left = canvasRect.x + 'px';
-    canvas.style.top = canvasRect.y + 'px';
     
-    // Store the original N when canvas is first set
-    if (originalN === null) {
-      originalN = DrawingEngine.N;
+    // Capture the original on-screen size (once)
+    if (originalCanvasSize === null) {
+      originalCanvasSize = DrawingEngine.W;
     }
+    
+    // Apply CSS scaling/position so the canvas is centered and fits the screen
+    updateCanvasDisplaySize();
   }
   
-  // Scale canvas without regenerating matrix
-  function scaleCanvas() {
-    if (originalN === null || DrawingEngine.matrix.length === 0) return;
-    
+  // Update CSS size/position of the canvas to keep it centered
+  // and clamped to the original on-screen size and current viewport.
+  function updateCanvasDisplaySize() {
     var w = window.innerWidth;
     var h = window.innerHeight;
-    var squareSize = Math.min(w, h);
-    var canvasX = (w / 2) - (squareSize / 2);
-    var canvasY = (h / 2) - (squareSize / 2);
+    var screenSize = Math.min(w, h);
     
-    // Update canvas dimensions but keep the original N (matrix structure)
-    DrawingEngine.W = squareSize;
-    DrawingEngine.H = squareSize;
-    DrawingEngine.N = originalN; // Keep original matrix size
+    var baseSize = originalCanvasSize !== null ? originalCanvasSize : DrawingEngine.W;
+    var displaySize = Math.min(baseSize, screenSize);
     
-    // Update canvas element
-    canvas.width = squareSize;
-    canvas.height = squareSize;
-    canvas.style.width = squareSize + 'px';
-    canvas.style.height = squareSize + 'px';
+    var canvasX = (w / 2) - (displaySize / 2);
+    var canvasY = (h / 2) - (displaySize / 2);
+    
+    canvas.style.width = displaySize + 'px';
+    canvas.style.height = displaySize + 'px';
     canvas.style.left = canvasX + 'px';
     canvas.style.top = canvasY + 'px';
     
-    // Update parameters
     params.setShiftX(canvasX);
     params.setShiftY(canvasY);
     params.setScreenWidth(w);
     params.setScreenHeight(h);
-    params.setCenX(squareSize / 2);
-    params.setCenY(squareSize / 2);
+    params.setCenX(displaySize / 2);
+    params.setCenY(displaySize / 2);
+  }
+  
+  // Ensure the internal canvas is large enough to draw all squares for the
+  // current square size (pixel size), then scale back to the original size
+  // on screen if necessary.
+  function adjustCanvasSizeForSquareSizeChange() {
+    if (DrawingEngine.matrix.length === 0) {
+      return;
+    }
     
-    // Redraw the existing matrix at the new size
+    var numSquares = DrawingEngine.N;
+    var pixelSize = params.getPixelSize();
+    
+    // Internal canvas size needed to fit all squares at this pixel size
+    var requiredSize = numSquares * pixelSize;
+    
+    DrawingEngine.W = requiredSize;
+    DrawingEngine.H = requiredSize;
+    canvas.width = requiredSize;
+    canvas.height = requiredSize;
+    
+    // Scale the canvas element back to the original on-screen size
+    // (or smaller if the viewport has shrunk).
+    updateCanvasDisplaySize();
+  }
+  
+  // Scale canvas when the window resizes without regenerating the matrix:
+  // keep the internal resolution, only adjust the on-screen size.
+  function scaleCanvas() {
+    if (DrawingEngine.matrix.length === 0) return;
+    
+    updateCanvasDisplaySize();
     DrawingEngine.fillMatrix(context, params);
   }
   
@@ -86,8 +112,6 @@
     DrawingEngine.apply_0_1_rule();
     DrawingEngine.drawMatrix(params);
     DrawingEngine.fillMatrix(context, params);
-    // Store the original N value after generating pattern
-    originalN = DrawingEngine.N;
   }
   
   // Redraw with current settings
@@ -172,10 +196,10 @@
   });
   
   pixelSizeSlider.addEventListener('input', function() {
-    var pixelSize = parseInt(this.value);
+    var pixelSize = parseInt(this.value, 10);
     params.setPixelSize(pixelSize);
     pixelSizeValue.textContent = pixelSize;
-    setCanvasSize();
+    adjustCanvasSizeForSquareSizeChange();
     generateNewPattern();
   });
   
