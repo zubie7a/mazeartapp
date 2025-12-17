@@ -176,10 +176,54 @@
   modalOkBtn.addEventListener('click', closeInfoModal);
   modalBackdrop.addEventListener('click', closeInfoModal);
   
-  // Close modal on Escape key
+  // Keyboard shortcuts
+  // - Escape: close info modal
+  // - Z: recreate underlying grid (new maze pattern)
+  // - R: reapply current palette (recolor existing islands)
   document.addEventListener('keydown', function(e) {
+    var tagName = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : '';
+    // Don't trigger shortcuts while typing in form controls
+    if (tagName === 'input' || tagName === 'select' || tagName === 'textarea') {
+      return;
+    }
+
     if (e.key === 'Escape' && infoModal.classList.contains('show')) {
       closeInfoModal();
+      return;
+    }
+
+    var key = e.key.toLowerCase();
+    if (key === 'z') {
+      // Recreate the underlying grid (new 0-1 rule + colors)
+      generateNewPattern();
+    } else if (key === 'r') {
+      // Reapply the current palette to existing islands (new colors only)
+      redraw();
+    } else if (key === 't') {
+      // Select a random palette and apply it
+      var maxPaletteIndex = 33; // Update if new palettes are added
+      var randomIndex = Math.floor(Math.random() * (maxPaletteIndex + 1));
+      params.setPaletteIndex(randomIndex);
+      paletteSelect.value = String(randomIndex);
+      redraw();
+    } else if (key === 'f') {
+      // Toggle vertical mirroring
+      var newVertical = !verticalMirrorToggle.checked;
+      verticalMirrorToggle.checked = newVertical;
+      params.setVerticalMirroring(newVertical);
+      refill();
+    } else if (key === 'g') {
+      // Toggle horizontal mirroring
+      var newHorizontal = !horizontalMirrorToggle.checked;
+      horizontalMirrorToggle.checked = newHorizontal;
+      params.setHorizontalMirroring(newHorizontal);
+      refill();
+    } else if (key === 'h') {
+      // Toggle smoothing
+      var newSmoothing = !smoothingToggle.checked;
+      smoothingToggle.checked = newSmoothing;
+      params.setSmoothing(newSmoothing);
+      refill();
     }
   });
   
