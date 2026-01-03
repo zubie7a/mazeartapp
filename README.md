@@ -1,5 +1,5 @@
 ## Santiago Zubieta
-#### 2025
+#### 2020 - 2025
 
 ## MaZeArtApp
 Random pattern generator inspired by [Hitomezashi Stitch Patterns](https://www.youtube.com/watch?v=JbfhzlMk2eY), with multiple parameters for resolution, symmetries, and palettes.
